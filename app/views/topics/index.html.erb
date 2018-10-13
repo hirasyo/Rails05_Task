@@ -8,11 +8,34 @@
               <%= topic.user.name %>
             </h2>
             <%= image_tag topic.image.url %>
-            <%= image_tag 'icons/heart-black.png', class: 'topic-index-icon' %>
+            <% if topic.favo?(current_user) %>
+              <%= link_to favorites_path(topic_id: topic.id), method: :delete do %>
+                <%= image_tag 'icons/heart-red.png', class: 'topic-index-icon' %>
+              <% end %>
+            <% else %>
+              <%= link_to favorites_path(topic_id: topic.id), method: :post do %>
+                <%= image_tag 'icons/heart-black.png', class: 'topic-index-icon' %>
+              <% end %>
+            <% end %>
+            <%= topic.favorites.count %>
             <%= image_tag 'icons/comment.png', class: 'topic-index-icon' %>
-            <p class="topic-text">
+            <p class="topic-description">
               <%= topic.description %>
             </p>
+            <% topic.comments.each do |comment| %>
+              <p class="topic-text">
+                <%= comment.comment %>
+              </p>
+            <% end %>
+            <%= form_for @comment do |f| %>
+              <div class="form-group">
+                <%= f.label :comment %>
+                <%= f.text_area :comment, class: 'form-control' %>
+                <%= f.hidden_field :topic_id, :value => topic.id %>
+              </div>
+
+              <%= f.submit 'コメントする', class: 'btn btn-black btn-block' %>
+            <% end %>
           </div>
         </div>
       </div>
